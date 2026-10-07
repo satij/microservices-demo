@@ -1,0 +1,35 @@
+﻿using Microsoft.EntityFrameworkCore;
+using ProductService.Domain.Entities;
+using ProductService.Infrastructure.Data;
+
+namespace ProductService.Infrastructure.Repositories;
+
+public class ProductRepository : IProductRepository
+{
+    private readonly ProductDbContext _context;
+
+    public ProductRepository(ProductDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Product?> GetByIdAsync(int id)
+    {
+        return await _context.Products
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task<List<Product>> GetAllAsync()
+    {
+        return await _context.Products
+            .ToListAsync();
+    }
+
+    public async Task<Product> AddAsync(Product product)
+    {
+        _context.Products.Add(product);
+        await _context.SaveChangesAsync();
+
+        return product;
+    }
+}
